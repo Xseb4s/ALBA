@@ -119,3 +119,6 @@ $html .= "
 use Dompdf\Dompdf;
 $dompdf = new Dompdf();
 $dompdf->loadHtml($html);
+$dompdf->render();
+$dompdf->stream("documento.pdf",array('Attachment'=>'0'))
+?>  

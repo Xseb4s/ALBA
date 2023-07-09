@@ -12,7 +12,7 @@
                 
                 <div class="selecModal">
                     <label>Mesa</label>
-                    <select id="mesa" class="form-control" name="mesa" type="number">
+                    <select id="mesa" class="form-control" name="mesa" type="number" onkeydown="if (event.keyCode === 13) { event.preventDefault(); document.getElementById('beer').focus(); }">
                         <option value="">- Seleccione mesa -</option>
                         <?php
                             $a=0;
@@ -31,7 +31,7 @@
                 <div class="form">
                   <div>
                       <label>N° cervezas</label>
-                      <input type="number" class="form-control" name="beer" id="beer">
+                      <input type="number" class="form-control" name="beer" id="beer" onkeydown="if (event.keyCode === 13) { event.preventDefault(); document.getElementById('user').focus(); }">
                   </div>
                   <br>
                   <div>

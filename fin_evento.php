@@ -1,6 +1,5 @@
 <?php
 
-
 include "config/conexion.php";
 
 $sql=$conexion->query("SELECT * FROM evento ORDER BY Id_evento DESC LIMIT 0,1");

@@ -2,6 +2,7 @@
 require_once '../../config/conexion.php'; //libreria de conexion a la base
 
 if (!empty($_POST['beer']) and !empty($_POST['mesa']) and !empty($_POST['user'])) {
+
     $sql = $conexion->query("SELECT * FROM evento ORDER BY Id_evento DESC LIMIT 0,1");
     $eve=$sql->fetch_object();
 
@@ -11,7 +12,7 @@ if (!empty($_POST['beer']) and !empty($_POST['mesa']) and !empty($_POST['user'])
     INNER JOIN estilos ON cerveza.fk_estilo = estilos.Id_estilo 
     INNER JOIN categorias ON estilos.fk_categoria=categorias.Id_categoria");
     $query = mysqli_query($conexion, $sql);
-    $filas = mysqli_fetch_all($query, MYSQLI_ASSOC); 
+    $filas = mysqli_fetch_all($query, MYSQLI_ASSOC);
 
     /* obtenemos los datos de usuario */
     $sql_2 = "SELECT usuarios.Id_usuario, usuarios.Nombre, rango_juez.Nombre AS Rango
@@ -41,19 +42,27 @@ if (!empty($_POST['beer']) and !empty($_POST['mesa']) and !empty($_POST['user'])
         <br>
         <label for="cervezas">Cervezas</label>
         <?php
+
+       /*  $filas=array(); vaciar arreglo/objeto */
+
+        $copia=$filas;
+        
         while ($a < $beer) {
             
             ?>
             
+
             <select id="cerveza<?=$a?>" class="form-control" name="cerveza<?=$a?>" type="number">
                 <option value="">- Seleccione cervezas -</option>
-                <?php foreach ($filas as $op): //llenar las opciones del select padre ?>
+                <?php foreach ($copia as $op): //llenar las opciones del select padre ?>
                 <option value="<?= $op['Id_cerveza']?>"><?=$op['categoria']," - ",$op['estilo']?></option>  
                 <?php endforeach; ?>
             </select>
 
             <?php
+            
             $a++;
+            
         }
         
         ?>

@@ -17,30 +17,22 @@ if(!$conexion){
 };
 $sql=$conexion->query("SELECT * FROM evento ORDER BY Id_evento DESC LIMIT 0,1");
 $alt=$sql->fetch_object();
-$evento=$alt->Id_evento;
-$nombre=$alt->Nombre;
-
-
 /* obtenemos el numero de mesas que hay */
 
 
-if($nombre!=""){
-    $alt = $conexion->query( "SELECT Mesas FROM evento WHERE Id_evento=($evento)");
+if(($alt->Nombre)!=""){
+    $alt = $conexion->query( "SELECT Mesas FROM evento WHERE Id_evento=($alt->Id_evento)");
     $count=$alt->fetch_object();
 
     
 }else {
-    $c=$conexion->query("SELECT * FROM evento ORDER BY Id_evento DESC LIMIT 1,1");
-    $d=$c->fetch_object();
+    $sql=$conexion->query("SELECT * FROM evento ORDER BY Id_evento DESC LIMIT 1,1");
+    $alt=$sql->fetch_object();
 
-    $alt = $conexion->query("SELECT Mesas FROM evento WHERE Id_evento=($d->Id_evento)");
-    $count=$alt->fetch_object(); 
+    $dat = $conexion->query("SELECT Mesas FROM evento WHERE Id_evento=($alt->Id_evento)");
+    $count=$dat->fetch_object(); 
 
 }
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -63,7 +55,7 @@ if($nombre!=""){
     <script>
 
     function eliminar(){
-        var respuesta=confirm("Estás a punto de eliminar un JUZGAMIENTO. ¿Deseas eliminar?");
+        var respuesta=confirm("Estás a punto de limpiar una mesa. ¿Deseas eliminar?");
         return respuesta
     };
     
@@ -91,59 +83,84 @@ if($nombre!=""){
         </form>
     </div>
     <div  class="table-responsive">
+    
         <div class="tabla">        
-            <h3>Jueces y cervezas asignadas || <?=$nombre?></h3>
-            <table>
-                <thead>
-                    <tr>
-                    <th scope="col">Categoría</th>
-                    <th scope="col">Estilo</th>
-                    <th scope="col">Código de la cerveza</th>
-                    <th scope="col">Juez</th>
-                    <th scope="col">Mesa</th>
-                    <th scope="col">Eliminar</th>
-                    </tr>
-                </thead>
-                <tbody>
+        
+            
                     <!-- se muestran datos de la tabla y se hace la consulta -->
                     <?php
                     include "../config/conexion.php";
 					include "controladoreJuzgamiento/eliminarJuzgamiento.php";
                     
+                    $a=0;
+                    while($a<$count->Mesas){
+                        $a++;
 
-                    $sql=$conexion->query("SELECT general.Id,general.fk_usuario, (SELECT Nombre FROM usuarios WHERE Id_usuario=general.fk_usuario) AS Usuario, 
-					categorias.Nombre AS Categoria, estilos.Nombre AS Estilo, cerveza.Codigo, general.Mesa
-					FROM evento_usuarios
-					INNER JOIN usuarios ON evento_usuarios.fk_usuarios=usuarios.Id_usuario
-					INNER JOIN cerveza ON cerveza.fk_usuario=usuarios.Id_usuario
-					INNER JOIN general ON general.fk_cerveza= cerveza.Id_cerveza
-					INNER JOIN estilos ON estilos.Id_estilo=cerveza.fk_estilo
-					INNER JOIN categorias ON categorias.Id_categoria=estilos.fk_categoria
-					WHERE general.Juzgado=0");
-                    /* se crea un while para listar los datos y se repite la la cantidad de filas de la tabla*/
-                    while($datos=$sql->fetch_object()){ 
-                    ?>
-                        <tr>
-                            <!-- se debe colocar el nombre de los atributos de la tabla que se mostrarán en la tabla -->
-                            <!-- <td><?=$datos->Id?></td>-->
-                            <td><?=$datos->Categoria?></td>
-                            <td><?=$datos->Estilo?></td>
-                            <td><?=$datos->Codigo?></td>                        
-                            <td><?=$datos->Usuario?></td>
-                            <td><?=$datos->Mesa?></td>
-                            
-                            <!-- iconos llamados mediante scrpit de font-awesome -->
-                            <td>
-                                <!-- redireccionamos a la pagina de modificacion y mandamos consigo el valor que hay en la variable -->
-                                <a onclick="return eliminar()" href="jueces.php?Id=<?=$datos->Id?>"><i class="bi bi-trash"></i></a>
+                        $sql = $conexion->query("SELECT general.Id,general.fk_usuario, (SELECT Nombre FROM usuarios WHERE Id_usuario=general.fk_usuario) AS Usuario, 
+                        categorias.Nombre AS Categoria, estilos.Nombre AS Estilo, cerveza.Codigo, general.Mesa
+                        FROM evento_usuarios
+                        INNER JOIN usuarios ON evento_usuarios.fk_usuarios=usuarios.Id_usuario
+                        INNER JOIN cerveza ON cerveza.fk_usuario=usuarios.Id_usuario
+                        INNER JOIN general ON general.fk_cerveza= cerveza.Id_cerveza
+                        INNER JOIN estilos ON estilos.Id_estilo=cerveza.fk_estilo
+                        INNER JOIN categorias ON categorias.Id_categoria=estilos.fk_categoria
+                        WHERE general.Juzgado=0 AND general.Mesa=$a
+                        GROUP BY general.fk_usuario");
+                        
+                        ?>
+                        <h2>Mesa <?=$a?></h2>
+                        <table>
+                        <thead>
+                            <tr>
+                                 Jueces
+                            </tr>
+                            <br>
+                            <tr>
+                                <?php while ($alt=$sql->fetch_object()) {?>
+                                    |<?=$alt->Usuario?>|
+                                    <?php } ?>
+                            </tr>
+                            <tr>
+                                <th colspan=2>Código</th>
+                                <th colspan=2>Cervezas</th>
                                 
-                            </td>
-                        </tr>
-                        <!-- abrimos php para cerrar el html y php -->
-                    <?php }
+                            </tr>
+                        </thead>
+                        <?php
+                        $sql=$conexion->query("SELECT general.Id,general.fk_usuario, (SELECT Nombre FROM usuarios WHERE Id_usuario=general.fk_usuario) AS Usuario, 
+                        categorias.Nombre AS Categoria, estilos.Nombre AS Estilo, cerveza.Codigo, general.Mesa
+                        FROM evento_usuarios
+                        INNER JOIN usuarios ON evento_usuarios.fk_usuarios=usuarios.Id_usuario
+                        INNER JOIN cerveza ON cerveza.fk_usuario=usuarios.Id_usuario
+                        INNER JOIN general ON general.fk_cerveza= cerveza.Id_cerveza
+                        INNER JOIN estilos ON estilos.Id_estilo=cerveza.fk_estilo
+                        INNER JOIN categorias ON categorias.Id_categoria=estilos.fk_categoria
+                        WHERE general.Juzgado=0 AND general.Mesa=$a
+                        GROUP BY categorias.Nombre");
+
+                        while($datos=$sql->fetch_object()){
+                            ?>
+                                <tbody>
+                                    <tr>
+                                        <td colspan=2><?=$datos->Codigo?></td> 
+                                        <!-- se debe colocar el nombre de los atributos de la tabla que se mostrarán en la tabla -->
+                                        <!-- <td><?=$datos->Id?></td>-->
+                                        <td colspan=2><?=$datos->Categoria." - ".$datos->Estilo?></td>
+                                        <!-- <td><?=$datos->Usuario?></td>  -->  
+                                    </tr>
+                                </tbody>
+                            
+                            <?php
+
+                        }
+                        ?>
+                        
+                        </table>
+                        <a onclick="return eliminar()" href="jueces.php?Mesa=<?=$a?>"><i class="bi bi-trash"></i>Eliminar todo</a>
+                        <?php
+                       
+                    }
                     ?>
-                </tbody>
-            </table>
 
             <div class="botonRegresar">
 			<a href="inicioAdmin.php"><button>Regresar</button></a>
@@ -155,3 +172,4 @@ if($nombre!=""){
 
 </body>
 </html>
+
