@@ -29,8 +29,8 @@ Alba website dedicated to [beer testing](https://www.bjcp.org "Beer Judge Certif
 -------------
 <h2>Developers</h2>
 <a href="https://github.com/JairRivera20">
-  <img src="https://avatars.githubusercontent.com/u/107558602?v=4" style="width:6em">
+  <img src="https://avatars.githubusercontent.com/u/107558602?v=4" style="width:5em">
 </a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="https://github.com/Xseb4s">
-  <img src="https://avatars.githubusercontent.com/u/138510395?v=4" style="width:6em">
+  <img src="https://avatars.githubusercontent.com/u/138510395?v=4" style="width:5em">
 </a>
